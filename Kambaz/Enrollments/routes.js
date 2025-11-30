@@ -1,32 +1,31 @@
 import EnrollmentsDao from "./dao.js";
 export default function EnrollmentsRoutes(app, db) {
     const dao = EnrollmentsDao(db);
-    const enrollUser = (req, res) => {
-        const { userId, courseId } = req.params;
-
-        if (!userId || !courseId) {
-        return res.status(400).json({ error: "Missing userId or courseId" });
-        }
-
-        dao.enrollUserInCourse(userId, courseId);
-        return res.status(201).json({ message: "User enrolled successfully" });
+    const enrollUser = async (req, res) => {
+    let { uid, cid } = req.params;
+    if (uid === "current") {
+      const currentUser = req.session["currentUser"];
+      uid = currentUser._id;
     }
-    const unEnrollUser = (req, res) => {
-        const { userId, courseId } = req.params;
+    const status = await dao.enrollUserInCourse(uid, cid);
+    res.send(status);
 
-        if (!userId || !courseId) {
-        return res.status(400).json({ error: "Missing userId or courseId" });
-        }
-
-        dao.unEnrollUserInCourse(userId, courseId);
-    
-        return res.status(200).json({ message: "User unenrolled successfully" });
     }
-    const findAllEnrollments = (req, res) => {
-    const enrollments = dao.getAllEnrollments();
+    const unEnrollUser = async (req, res) => {
+        let { uid, cid } = req.params;
+    if (uid === "current") {
+      const currentUser = req.session["currentUser"];
+      uid = currentUser._id;
+    }
+    const status = await dao.unEnrollUserInCourse(uid, cid);
+    res.send(status);
+
+    }
+    const findAllEnrollments = async (req, res) => {
+    const enrollments = await dao.getAllEnrollments();
     res.send(enrollments);
   }
   app.get("/api/enrollments", findAllEnrollments);
-  app.delete("/api/enrollments/:userId/:courseId", unEnrollUser);
-  app.post("/api/enrollments/:userId/:courseId", enrollUser);
+  app.delete("/api/enrollments/:uid/:cid", unEnrollUser);
+  app.post("/api/enrollments/:uid/:cid", enrollUser);
 }
