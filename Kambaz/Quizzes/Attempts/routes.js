@@ -5,7 +5,7 @@ export default function AttemptsRoutes(app) {
   const dao = AttemptsDao();
   const router = express.Router();
 
-  router.post("/", async (req, res) => {
+  router.post("/api/attempts", async (req, res) => {
     try {
       const attempt = await dao.createAttempt(req.body);
       res.json(attempt);
@@ -15,7 +15,7 @@ export default function AttemptsRoutes(app) {
     }
   });
 
-  router.get("/user/:userId/quiz/:quizId", async (req, res) => {
+  router.get("/api/attempts/user/:userId/quiz/:quizId", async (req, res) => {
     try {
       const attempt = await dao.getAttemptForUser(req.params.userId, req.params.quizId);
       res.json(attempt);
@@ -25,7 +25,7 @@ export default function AttemptsRoutes(app) {
     }
   });
 
-  router.put("/:attemptId", async (req, res) => {
+  router.put("/api/attempts/:attemptId", async (req, res) => {
     try {
       const updated = await dao.updateAttemptForUser(
         req.params.attemptId,
@@ -37,6 +37,4 @@ export default function AttemptsRoutes(app) {
       res.status(500).json({ error: "Error updating attempt" });
     }
   });
-
-  app.use("/api/attempts", router);
 }
