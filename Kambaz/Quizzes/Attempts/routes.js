@@ -3,9 +3,8 @@ import AttemptsDao from "./dao.js";
 
 export default function AttemptsRoutes(app) {
   const dao = AttemptsDao();
-  const router = express.Router();
 
-  router.post("/api/attempts", async (req, res) => {
+  app.post("/api/attempts", async (req, res) => {
     try {
       const attempt = await dao.createAttempt(req.body);
       res.json(attempt);
@@ -15,7 +14,7 @@ export default function AttemptsRoutes(app) {
     }
   });
 
-  router.get("/api/attempts/user/:userId/quiz/:quizId", async (req, res) => {
+  app.get("/api/attempts/user/:userId/quiz/:quizId", async (req, res) => {
     try {
       const attempt = await dao.getAttemptForUser(req.params.userId, req.params.quizId);
       res.json(attempt);
@@ -25,7 +24,7 @@ export default function AttemptsRoutes(app) {
     }
   });
 
-  router.put("/api/attempts/:attemptId", async (req, res) => {
+  app.put("/api/attempts/:attemptId", async (req, res) => {
     try {
       const updated = await dao.updateAttemptForUser(
         req.params.attemptId,
